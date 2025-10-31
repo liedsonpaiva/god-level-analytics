@@ -6,34 +6,47 @@ import os
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
 
+def get_db_connection_string():
+    """Retorna a string de conexão para SQLModel"""
+    pwd = os.getenv("DB_PASSWORD")
+    host = os.getenv("DB_HOST", "localhost")
+    port = os.getenv("DB_PORT", "5432")
+    database = os.getenv("DB_NAME", "food_analytics")
+    user = os.getenv("DB_USER", "postgres")
+    
+    if not pwd:
+        raise ValueError("A variável DB_PASSWORD não foi encontrada no arquivo .env")
+    
+    return f"postgresql://{user}:{pwd}@{host}:{port}/{database}"
+
 def conn():
+    """Função original para compatibilidade - usa psycopg2 diretamente"""
     try:
-        # Pega a senha do banco de dados a partir da variável de ambiente
         pwd = os.getenv("DB_PASSWORD")
+        host = os.getenv("DB_HOST", "localhost")
+        port = os.getenv("DB_PORT", "5432")
+        database = os.getenv("DB_NAME", "food_analytics")
+        user = os.getenv("DB_USER", "postgres")
         
-        # Verifica se a variável foi carregada corretamente
         if not pwd:
             raise ValueError("A variável DB_PASSWORD não foi encontrada no arquivo .env")
         
-        # Conectar ao banco de dados
         conecta = pg.connect(
-            user="postgres",
+            user=user,
             password=pwd,
-            host="127.0.0.1",  # endereço do banco de dados
-            port=5432,  # Correção do 'post' para 'port'
-            database="food_analytics"
+            host=host,
+            port=port,
+            database=database
         )
         
         print("Conectado com sucesso")
-        return conecta  # Retorna a conexão
+        return conecta
 
     except Error as e:
-        # Captura e exibe qualquer erro na conexão
         print(f"Erro ao se conectar ao banco de dados: {e}")
-        raise  # Levanta o erro para que a aplicação possa tratar
+        raise
 
 def encerra_conn(conecta):
-    # Função para fechar a conexão com o banco
     if conecta:
         conecta.close()
         print("Conexão encerrada com sucesso.")
