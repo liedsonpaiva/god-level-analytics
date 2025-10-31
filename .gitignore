@@ -1,5 +1,36 @@
-# Ignorar a pasta __pycache__
+# Python
 __pycache__/
-
-# Ignorar o ambiente virtual (venv)
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
 venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Database
+*.db
+*.sqlite3
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Docker
+.docker/
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
