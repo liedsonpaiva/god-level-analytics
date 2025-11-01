@@ -3,6 +3,8 @@ from typing import Optional
 from datetime import datetime, date
 
 class Customer(SQLModel, table=True):
+    __tablename__ = "customers"
+    
     id: Optional[int] = Field(default=None, primary_key=True)
     customer_name: Optional[str] = Field(max_length=100, default=None)
     email: Optional[str] = Field(max_length=100, default=None)
@@ -10,8 +12,8 @@ class Customer(SQLModel, table=True):
     cpf: Optional[str] = Field(max_length=100, default=None)
     birth_date: Optional[date] = Field(default=None)
     gender: Optional[str] = Field(max_length=10, default=None)
-    store_id: Optional[int] = Field(foreign_key="store.id")
-    sub_brand_id: Optional[int] = Field(foreign_key="subbrand.id")
+    store_id: Optional[int] = Field(foreign_key="stores.id")  # ⬅️ CORRIGIDO
+    sub_brand_id: Optional[int] = Field(foreign_key="sub_brands.id")  # ⬅️ CORRIGIDO
     registration_origin: Optional[str] = Field(max_length=20, default=None)
     agree_terms: bool = Field(default=False)
     receive_promotions_email: bool = Field(default=False)
