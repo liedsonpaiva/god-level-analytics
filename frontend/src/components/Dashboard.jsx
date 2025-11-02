@@ -32,88 +32,62 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Função para buscar dados
-  const fetchDashboardData = async (filterParams = null) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Usa os filters do estado ou os parâmetros passados
-      const currentFilters = filterParams || filters;
-      
-      // Constrói os parâmetros da query baseado nos filtros
-      const queryParams = new URLSearchParams();
-      if (currentFilters.dateRange !== '30d') {
-        queryParams.append('days', currentFilters.dateRange === '7d' ? 7 : 90);
-      }
-      if (currentFilters.channel !== 'all') {
-        queryParams.append('channel', currentFilters.channel);
-      }
-      
-      const queryString = queryParams.toString();
-      const urlSuffix = queryString ? `?${queryString}` : '';
-      
-      const [overviewRes, trendRes, channelsRes, productsRes] = await Promise.all([
-        axios.get(`http://localhost:8000/api/analytics/overview${urlSuffix}`),
-        axios.get(`http://localhost:8000/api/analytics/sales/trend${urlSuffix}`),
-        axios.get(`http://localhost:8000/api/analytics/channels/performance${urlSuffix}`),
-        axios.get(`http://localhost:8000/api/analytics/products/top-insights${urlSuffix}`)
-      ]);
-
-      setOverview(overviewRes.data);
-      setSalesTrend(trendRes.data.sales_trend || []);
-      setChannels(channelsRes.data.channels || []);
-      setProducts(productsRes.data.top_products || []);
-      
-      // Mock data para os insights (substitua pelas APIs reais quando disponíveis)
-      // Estes dados mockados também podem variar baseado nos filtros
-      const mockTimeAnalysis = currentFilters.channel === 'ifood' ? [
-        { hour: '12', total_revenue: 1200 },
-        { hour: '13', total_revenue: 1800 },
-        { hour: '14', total_revenue: 1500 },
-        { hour: '19', total_revenue: 2200 },
-        { hour: '20', total_revenue: 2800 },
-      ] : [
-        { hour: '12', total_revenue: 1500 },
-        { hour: '13', total_revenue: 2000 },
-        { hour: '14', total_revenue: 1800 },
-        { hour: '19', total_revenue: 2500 },
-        { hour: '20', total_revenue: 3000 },
-      ];
-      
-      setTimeAnalysis(mockTimeAnalysis);
-      
-      const mockCustomerInsights = currentFilters.dateRange === '7d' ? {
-        repeat_rate: 28,
-        avg_customer_value: 42.30,
-        loyal_customers: [
-          { name: 'João Silva', total_orders: 3, total_spent: 150 },
-          { name: 'Maria Santos', total_orders: 2, total_spent: 95 }
-        ],
-        at_risk_customers: [
-          { name: 'Pedro Costa', last_purchase_days: 10, total_orders: 1, total_spent: 45 },
-        ]
-      } : {
-        repeat_rate: 35,
-        avg_customer_value: 45.50,
-        loyal_customers: [
-          { name: 'João Silva', total_orders: 15, total_spent: 680 },
-          { name: 'Maria Santos', total_orders: 12, total_spent: 540 }
-        ],
-        at_risk_customers: [
-          { name: 'Pedro Costa', last_purchase_days: 45, total_orders: 8, total_spent: 320 },
-          { name: 'Ana Oliveira', last_purchase_days: 60, total_orders: 5, total_spent: 210 }
-        ]
-      };
-      
-      setCustomerInsights(mockCustomerInsights);
-      
-    } catch (error) {
-      console.error('Erro ao carregar dashboard:', error);
-      setError('Erro ao carregar dados. Verifique se o backend está rodando na porta 8000.');
-    } finally {
-      setLoading(false);
+  // Função para buscar dados
+const fetchDashboardData = async (filterParams = null) => {
+  try {
+    setLoading(true);
+    setError(null);
+    
+    // Usa os filters do estado ou os parâmetros passados
+    const currentFilters = filterParams || filters;
+    
+    // Constrói os parâmetros da query baseado nos filtros
+    const queryParams = new URLSearchParams();
+    
+    // Converter dateRange para dias
+    const daysMap = {
+      '7d': 7,
+      '30d': 30, 
+      '90d': 90
+    };
+    queryParams.append('days', daysMap[currentFilters.dateRange] || 30);
+    
+    if (currentFilters.channel !== 'all') {
+      queryParams.append('channel', currentFilters.channel);
     }
-  };
+    
+    const queryString = queryParams.toString();
+    const urlSuffix = queryString ? `?${queryString}` : '';
+    
+    // AGORA COM AS NOVAS APIS REAIS - removemos os mocks!
+    const [overviewRes, trendRes, channelsRes, timeRes, customersRes, performanceRes] = await Promise.all([
+      axios.get(`http://localhost:8000/api/analytics/overview${urlSuffix}`),
+      axios.get(`http://localhost:8000/api/analytics/sales/trend${urlSuffix}`),
+      axios.get(`http://localhost:8000/api/analytics/channels/performance${urlSuffix}`),
+      axios.get(`http://localhost:8000/api/analytics/products/top-insights${urlSuffix}`),
+      // NOVAS APIS - substituindo os mocks
+      axios.get(`http://localhost:8000/api/analytics/sales/time-analysis${urlSuffix}`),
+      axios.get(`http://localhost:8000/api/analytics/customers/insights${urlSuffix}`),
+      axios.get(`http://localhost:8000/api/analytics/products/performance${urlSuffix}`)
+    ]);
+
+    // Atualizar todos os estados com dados REAIS
+    setOverview(overviewRes.data);
+    setSalesTrend(trendRes.data.sales_trend || []);
+    setChannels(channelsRes.data.channels || []);
+    setProducts(performanceRes.data.products_performance || []); // Usar performance que tem margens
+    setTimeAnalysis(timeRes.data.time_analysis || []);
+    setCustomerInsights(customersRes.data);
+    
+    // REMOVER TODOS OS MOCKS - agora temos dados reais!
+    
+  } catch (error) {
+    console.error('Erro ao carregar dashboard:', error);
+    setError('Erro ao carregar dados. Verifique se o backend está rodando na porta 8000.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchDashboardData();
