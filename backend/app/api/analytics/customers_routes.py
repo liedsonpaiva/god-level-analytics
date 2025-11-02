@@ -1,3 +1,4 @@
+from fastapi import APIRouter, Depends, Query
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, text, create_engine
 from app.core.connect import get_db_connection_string
@@ -48,5 +49,108 @@ def get_customers_insights(session: Session = Depends(get_session)):
                 "avg_spent": float(row[2]) if row[2] else 0
             }
             for row in result
+        ]
+    }
+    
+# backend/app/api/analytics/customers_routes.py - ADICIONAR ESTE ENDPOINT
+@router.get("/customers/insights")
+def get_customer_insights(
+    days: int = Query(30, description="Período em dias"),
+    session: Session = Depends(get_session)
+):
+    # Taxa de retorno
+    repeat_query = text(f"""
+        WITH customer_orders AS (
+            SELECT 
+                customer_id,
+                COUNT(DISTINCT DATE(created_at)) as order_days,
+                COUNT(*) as total_orders
+            FROM sales 
+            WHERE created_at >= CURRENT_DATE - INTERVAL '{days} days'
+              AND sale_status_desc = 'COMPLETED'
+              AND customer_id IS NOT NULL
+            GROUP BY customer_id
+        )
+        SELECT 
+            ROUND(
+                COUNT(CASE WHEN total_orders > 1 THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0),
+                1
+            ) as repeat_rate,
+            ROUND(AVG(total_orders), 1) as avg_orders_per_customer,
+            ROUND(AVG(s.total_amount), 2) as avg_customer_value
+        FROM customer_orders co
+        JOIN sales s ON s.customer_id = co.customer_id
+    """)
+    
+    repeat_result = session.exec(repeat_query).first()
+    
+    # Clientes em risco
+    at_risk_query = text(f"""
+        WITH last_purchases AS (
+            SELECT 
+                c.id as customer_id,
+                c.customer_name,
+                MAX(s.created_at) as last_purchase,
+                COUNT(s.id) as total_orders,
+                SUM(s.total_amount) as total_spent
+            FROM customers c
+            JOIN sales s ON s.customer_id = c.id
+            WHERE s.sale_status_desc = 'COMPLETED'
+            GROUP BY c.id, c.customer_name
+        )
+        SELECT 
+            customer_id,
+            customer_name,
+            total_orders,
+            total_spent,
+            EXTRACT(DAYS FROM (NOW() - last_purchase)) as last_purchase_days
+        FROM last_purchases
+        WHERE last_purchase < NOW() - INTERVAL '30 days'
+          AND total_orders >= 3
+        ORDER BY total_spent DESC
+        LIMIT 10
+    """)
+    
+    at_risk_result = session.exec(at_risk_query).all()
+    
+    # Clientes fiéis
+    loyal_query = text(f"""
+        SELECT 
+            c.id as customer_id,
+            c.customer_name,
+            COUNT(s.id) as total_orders,
+            SUM(s.total_amount) as total_spent
+        FROM customers c
+        JOIN sales s ON s.customer_id = c.id
+        WHERE s.sale_status_desc = 'COMPLETED'
+        GROUP BY c.id, c.customer_name
+        HAVING COUNT(s.id) >= 5
+        ORDER BY total_spent DESC
+        LIMIT 5
+    """)
+    
+    loyal_result = session.exec(loyal_query).all()
+
+    return {
+        "repeat_rate": repeat_result[0] if repeat_result else 0,
+        "avg_customer_value": float(repeat_result[2]) if repeat_result and repeat_result[2] else 0,
+        "at_risk_customers": [
+            {
+                "customer_id": row[0],
+                "name": row[1],
+                "total_orders": row[2],
+                "total_spent": float(row[3]) if row[3] else 0,
+                "last_purchase_days": int(row[4]) if row[4] else 0
+            }
+            for row in at_risk_result
+        ],
+        "loyal_customers": [
+            {
+                "customer_id": row[0],
+                "name": row[1],
+                "total_orders": row[2],
+                "total_spent": float(row[3]) if row[3] else 0
+            }
+            for row in loyal_result
         ]
     }
