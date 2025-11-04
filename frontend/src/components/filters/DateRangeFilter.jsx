@@ -13,14 +13,11 @@ export const DateRangeFilter = ({ value, onChange }) => {
     let startDate = new Date()
     
     if (days === 'current_month') {
-      // Primeiro dia do mês atual
       startDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1)
     } else {
-      // Dias anteriores
       startDate.setDate(endDate.getDate() - days)
     }
     
-    // Garantir que startDate seja anterior a endDate
     if (startDate > endDate) {
       startDate = new Date(endDate)
       startDate.setDate(endDate.getDate() - days)
@@ -43,19 +40,16 @@ export const DateRangeFilter = ({ value, onChange }) => {
 
   const handleStartDateChange = (e) => {
     const newStartDate = new Date(e.target.value)
-    // Se nova data inicial for depois da final, ajustar a final
     const newEndDate = newStartDate > value.endDate ? new Date(newStartDate) : value.endDate
     onChange({ startDate: newStartDate, endDate: newEndDate })
   }
 
   const handleEndDateChange = (e) => {
     const newEndDate = new Date(e.target.value)
-    // Se nova data final for antes da inicial, ajustar a inicial
     const newStartDate = newEndDate < value.startDate ? new Date(newEndDate) : value.startDate
     onChange({ startDate: newStartDate, endDate: newEndDate })
   }
 
-  // Validar se as datas são válidas
   const isValidDate = (date) => {
     return date instanceof Date && !isNaN(date)
   }
@@ -72,7 +66,6 @@ export const DateRangeFilter = ({ value, onChange }) => {
         </span>
       </div>
       
-      {/* Botões Rápidos */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Períodos Rápidos:
@@ -90,7 +83,6 @@ export const DateRangeFilter = ({ value, onChange }) => {
         </div>
       </div>
 
-      {/* Seleção Manual de Datas */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Período Personalizado:
@@ -118,13 +110,12 @@ export const DateRangeFilter = ({ value, onChange }) => {
               onChange={handleEndDateChange}
               className="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               min={formatForInput(value.startDate)}
-              max={formatForInput(new Date())} // Não permitir datas futuras
+              max={formatForInput(new Date())}
             />
           </div>
         </div>
       </div>
 
-      {/* Informações do Período */}
       <div className="text-xs text-gray-500">
         {isValidDate(value.startDate) && isValidDate(value.endDate) && (
           <div>

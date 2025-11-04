@@ -1,4 +1,3 @@
-// frontend/src/pages/ComparisonDashboard.jsx - NOVO ARQUIVO
 import React, { useState, useEffect } from 'react'
 import { Card } from '../components/ui/Card.jsx'
 import { SimpleBarChart } from '../components/charts/BarChart.jsx'
@@ -21,9 +20,8 @@ export function ComparisonDashboard() {
   const [rankingData, setRankingData] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [activeTab, setActiveTab] = useState('comparison') // 'comparison', 'regions', 'ranking'
+  const [activeTab, setActiveTab] = useState('comparison')
 
-  // Carregar dados quando datas ou lojas selecionadas mudarem
   useEffect(() => {
     if (selectedStores.length > 0) {
       loadComparisonData()
@@ -84,14 +82,6 @@ export function ComparisonDashboard() {
     }
   }
 
-  // Métricas para exibição
-  const getTopMetricStore = (metric) => {
-    if (comparisonData.length === 0) return null
-    return comparisonData.reduce((prev, current) => 
-      current[metric] > prev[metric] ? current : prev
-    )
-  }
-
   if (loading && comparisonData.length === 0) {
     return <LoadingState message="Carregando comparação de lojas..." />
   }
@@ -118,15 +108,12 @@ export function ComparisonDashboard() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar com Filtros */}
           <div className="lg:col-span-1 space-y-6">
             <StoreComparisonFilter />
             <RegionSelector />
           </div>
 
-          {/* Conteúdo Principal */}
           <div className="lg:col-span-3">
-            {/* Tabs de Navegação */}
             <div className="bg-white rounded-lg shadow-sm border mb-6">
               <div className="flex border-b">
                 <button
@@ -162,7 +149,6 @@ export function ComparisonDashboard() {
               </div>
             </div>
 
-            {/* Conteúdo das Tabs */}
             {activeTab === 'comparison' && (
               <ComparisonTab 
                 data={comparisonData} 
@@ -185,7 +171,6 @@ export function ComparisonDashboard() {
   )
 }
 
-// Componente para Tab de Comparação Direta
 function ComparisonTab({ data, loading, selectedStores }) {
   if (selectedStores.length === 0) {
     return (
@@ -221,7 +206,6 @@ function ComparisonTab({ data, loading, selectedStores }) {
 
   return (
     <div className="space-y-6">
-      {/* KPIs Comparativos */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="text-center">
           <div className="text-2xl font-bold text-primary-600">
@@ -254,7 +238,6 @@ function ComparisonTab({ data, loading, selectedStores }) {
         </Card>
       </div>
 
-      {/* Gráficos Comparativos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card title="Faturamento por Loja">
           <SimpleBarChart
@@ -277,7 +260,6 @@ function ComparisonTab({ data, loading, selectedStores }) {
         </Card>
       </div>
 
-      {/* Tabela Detalhada */}
       <Card title="Métricas Detalhadas">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -329,7 +311,6 @@ function ComparisonTab({ data, loading, selectedStores }) {
   )
 }
 
-// Componente para Tab de Regiões
 function RegionsTab({ data }) {
   if (data.length === 0) {
     return (
@@ -398,7 +379,6 @@ function RegionsTab({ data }) {
   )
 }
 
-// Componente para Tab de Ranking
 function RankingTab({ data }) {
   if (data.length === 0) {
     return (

@@ -1,23 +1,18 @@
-// frontend/src/components/filters/RegionSelector.jsx - NOVO ARQUIVO
 import React from 'react'
 import { useStore } from '../../contexts/StoreContext.jsx'
 
 export function RegionSelector() {
   const { allStores, selectStoresByRegion, selectedStores } = useStore()
 
-  // Extrair cidades únicas
   const cities = [...new Set(allStores.map(store => store.city))].sort()
   
-  // Extrair estados únicos
   const states = [...new Set(allStores.map(store => store.state))].sort()
 
-  // Contar lojas por cidade
   const storesByCity = allStores.reduce((acc, store) => {
     acc[store.city] = (acc[store.city] || 0) + 1
     return acc
   }, {})
 
-  // Contar lojas por estado
   const storesByState = allStores.reduce((acc, store) => {
     acc[store.state] = (acc[store.state] || 0) + 1
     return acc
@@ -29,7 +24,6 @@ export function RegionSelector() {
         Seleção por Região
       </h3>
 
-      {/* Cidades */}
       <div className="mb-6">
         <h4 className="text-sm font-medium text-gray-700 mb-3">Cidades</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -48,7 +42,6 @@ export function RegionSelector() {
         </div>
       </div>
 
-      {/* Estados */}
       <div>
         <h4 className="text-sm font-medium text-gray-700 mb-3">Estados</h4>
         <div className="flex flex-wrap gap-2">
@@ -56,12 +49,9 @@ export function RegionSelector() {
             <button
               key={state}
               onClick={() => {
-                // Selecionar todas as lojas do estado
                 const stateStores = allStores
                   .filter(store => store.state === state)
                   .map(store => store.id)
-                // Não há selectStoresByState, então fazemos manualmente
-                // Isso seria implementado no contexto se necessário
               }}
               className="flex items-center space-x-2 px-3 py-2 border rounded-lg hover:bg-green-50 hover:border-green-200 transition-colors"
             >
@@ -74,7 +64,6 @@ export function RegionSelector() {
         </div>
       </div>
 
-      {/* Status da seleção atual */}
       {selectedStores.length > 0 && (
         <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="text-sm text-blue-700">

@@ -1,5 +1,3 @@
-// frontend/src/components/ui/EmptyState.jsx - NOVO COMPONENTE
-
 export function EmptyState({ 
   title = "Nenhum dado disponível", 
   message = "Não existem registros para o período selecionado",

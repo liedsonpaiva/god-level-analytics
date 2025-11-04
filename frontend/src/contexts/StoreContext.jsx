@@ -1,4 +1,3 @@
-// frontend/src/contexts/StoreContext.jsx - NOVO ARQUIVO
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { analyticsService } from '../services/api.js'
 
@@ -10,7 +9,6 @@ export function StoreProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Carregar todas as lojas disponíveis
   useEffect(() => {
     loadAllStores()
   }, [])
@@ -23,7 +21,6 @@ export function StoreProvider({ children }) {
       const response = await analyticsService.getAllStores()
       setAllStores(response.data.data || [])
       
-      // Selecionar automaticamente as primeiras 3 lojas
       if (response.data.data && response.data.data.length > 0) {
         const initialStores = response.data.data.slice(0, 3).map(store => store.id)
         setSelectedStores(initialStores)
@@ -41,7 +38,6 @@ export function StoreProvider({ children }) {
       if (prev.includes(storeId)) {
         return prev.filter(id => id !== storeId)
       } else {
-        // Limitar a 5 lojas selecionadas
         if (prev.length >= 5) {
           alert('Máximo de 5 lojas podem ser comparadas simultaneamente')
           return prev
@@ -61,7 +57,7 @@ export function StoreProvider({ children }) {
       .map(store => store.id)
     
     if (storesInCity.length > 0) {
-      setSelectedStores(storesInCity.slice(0, 5)) // Máximo 5 lojas
+      setSelectedStores(storesInCity.slice(0, 5))
     }
   }
 

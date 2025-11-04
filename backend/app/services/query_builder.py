@@ -10,7 +10,6 @@ class QueryBuilder:
         self.queries_base_path = Path("database/queries")
     
     async def load_query(self, category: str, query_name: str) -> str:
-        """Carrega query SQL do arquivo organizado por categoria"""
         query_path = self.queries_base_path / category / f"{query_name}.sql"
         
         print(f"🔍 Buscando query: {query_path}")
@@ -24,7 +23,6 @@ class QueryBuilder:
             return query_content
     
     async def execute_query(self, category: str, query_name: str, params: Optional[Tuple] = None) -> List[Dict]:
-        """Executa uma query pré-definida com parâmetros"""
         try:
             query = await self.load_query(category, query_name)
             
@@ -33,7 +31,6 @@ class QueryBuilder:
             print(f"📝 Query preview: {query[:200]}...")
             
             async with self.db_pool.acquire() as connection:
-                # ✅ CORREÇÃO: Só passar parâmetros se existirem E se a query usar placeholders ($1, $2)
                 if params and any(f'${i+1}' in query for i in range(len(params))):
                     print(f"🔧 Query USA parâmetros: {params}")
                     result = await connection.fetch(query, *params)
@@ -48,7 +45,6 @@ class QueryBuilder:
             print(f"❌ Erro executando query {category}/{query_name}: {e}")
             raise e
 
-    # 📊 VENDAS E DESEMPENHO
     async def get_total_sales_period(self, start_date: date, end_date: date) -> List[Dict]:
         return await self.execute_query('vendas_e_desempenho', 'total_sales_period', (start_date, end_date))
     
@@ -76,7 +72,6 @@ class QueryBuilder:
     async def get_sales_by_store_city(self, start_date: date, end_date: date) -> List[Dict]:
         return await self.execute_query('vendas_e_desempenho', 'sales_by_store_city', (start_date, end_date))
 
-    # 🍔 PRODUTOS
     async def get_top_revenue_categories(self, start_date: date, end_date: date) -> List[Dict]:
         return await self.execute_query('produtos', 'top_revenue_categories', (start_date, end_date))
     
@@ -95,24 +90,18 @@ class QueryBuilder:
     async def get_low_margin_products(self, start_date: date, end_date: date) -> List[Dict]:
         return await self.execute_query('produtos', 'low_margin_products', (start_date, end_date))
 
-    # 👥 CLIENTES - CORRIGIDO: SEM parâmetros
     async def get_total_customers(self) -> List[Dict]:
-        # ✅ CORREÇÃO: SEM parâmetros
         return await self.execute_query('clientes', 'total_customers')
     
     async def get_promotion_optin_rate(self) -> List[Dict]:
-        # ✅ CORREÇÃO: SEM parâmetros  
         return await self.execute_query('clientes', 'promotion_optin_rate')
     
     async def get_customer_age_distribution(self) -> List[Dict]:
-        # ✅ CORREÇÃO: SEM parâmetros
         return await self.execute_query('clientes', 'customer_age_distribution')
     
     async def get_avg_orders_per_customer(self, start_date: date, end_date: date) -> List[Dict]:
-        # ✅ Esta recebe parâmetros normalmente
         return await self.execute_query('clientes', 'avg_orders_per_customer', (start_date, end_date))
 
-    # 🚚 ENTREGAS
     async def get_avg_delivery_time_by_channel(self, start_date: date, end_date: date) -> List[Dict]:
         return await self.execute_query('entregas', 'avg_delivery_time_by_channel', (start_date, end_date))
     
@@ -125,7 +114,6 @@ class QueryBuilder:
     async def get_avg_delivery_cost(self, start_date: date, end_date: date) -> List[Dict]:
         return await self.execute_query('entregas', 'avg_delivery_cost', (start_date, end_date))
 
-    # 💳 PAGAMENTOS
     async def get_top_payment_methods(self, start_date: date, end_date: date) -> List[Dict]:
         return await self.execute_query('pagamentos', 'top_payment_methods', (start_date, end_date))
     

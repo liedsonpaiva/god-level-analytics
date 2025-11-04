@@ -10,15 +10,11 @@ from app.core.dependencies import get_db
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
-# ==================== 📊 NOVOS ENDPOINTS PARA O FRONTEND ====================
-
 @router.get("/debug/queries")
 async def debug_queries(db_pool = Depends(get_db)):
-    """Debug endpoint para verificar queries"""
     try:
         query_builder = QueryBuilder(db_pool)
         
-        # Testar cada query
         queries_to_test = [
             ('vendas_e_desempenho', 'total_sales_period'),
             ('vendas_e_desempenho', 'top_sales_channel'),
@@ -38,7 +34,6 @@ async def debug_queries(db_pool = Depends(get_db)):
         results = {}
         for category, query_name in queries_to_test:
             try:
-                # Tentar carregar a query
                 query_content = await query_builder.load_query(category, query_name)
                 results[f"{category}/{query_name}"] = {
                     "status": "✅ Encontrada",
@@ -46,7 +41,6 @@ async def debug_queries(db_pool = Depends(get_db)):
                     "preview": query_content[:100] + "..." if len(query_content) > 100 else query_content
                 }
                 
-                # Tentar executar a query com datas padrão
                 start_date = date(2024, 1, 1)
                 end_date = date(2024, 1, 31)
                 query_data = await query_builder.execute_query(category, query_name, (start_date, end_date))
@@ -75,17 +69,15 @@ async def compare_stores(
     start_date: str = Query(..., description="Data inicial (YYYY-MM-DD)"),
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     store_ids: str = Query(..., description="IDs das lojas separados por vírgula"),
-    db_pool = Depends(get_db)  # MUDAR para db_pool
+    db_pool = Depends(get_db)
 ):
-    """Comparação detalhada entre múltiplas lojas"""
     try:
         print(f"🏪 Comparando lojas: {store_ids} - {start_date} até {end_date}")
         
-        # Converter string de IDs para lista
         store_ids_list = [int(id.strip()) for id in store_ids.split(',')]
         
         analytics_service = AnalyticsService(db_pool)
-        data = await analytics_service.get_store_comparison(  # MUDAR: adicionar await
+        data = await analytics_service.get_store_comparison(
             datetime.strptime(start_date, "%Y-%m-%d").date(),
             datetime.strptime(end_date, "%Y-%m-%d").date(),
             store_ids_list
@@ -103,15 +95,13 @@ async def compare_stores(
 async def get_store_regions(
     start_date: str = Query(..., description="Data inicial (YYYY-MM-DD)"),
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
-    db_pool = Depends(get_db)  # MUDAR: db_pool em vez de db: Session
+    db_pool = Depends(get_db)
 ):
-    """Métricas agrupadas por região (cidade/estado)"""
     try:
         print(f"🗺️ Buscando regiões: {start_date} até {end_date}")
         
-        # CRIAR AnalyticsService com pool assíncrono
         analytics_service = AnalyticsService(db_pool)
-        data = await analytics_service.get_store_regions(  # MUDAR: adicionar await
+        data = await analytics_service.get_store_regions(
             datetime.strptime(start_date, "%Y-%m-%d").date(),
             datetime.strptime(end_date, "%Y-%m-%d").date()
         )
@@ -129,15 +119,13 @@ async def get_store_ranking(
     start_date: str = Query(..., description="Data inicial (YYYY-MM-DD)"),
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     limit: int = Query(10, ge=1, le=50),
-    db_pool = Depends(get_db)  # MUDAR: db_pool em vez de db: Session
+    db_pool = Depends(get_db)
 ):
-    """Ranking das lojas por performance"""
     try:
         print(f"🏆 Buscando ranking top {limit}: {start_date} até {end_date}")
         
-        # CRIAR AnalyticsService com pool assíncrono
         analytics_service = AnalyticsService(db_pool)
-        data = await analytics_service.get_store_ranking(  # MUDAR: adicionar await
+        data = await analytics_service.get_store_ranking(
             datetime.strptime(start_date, "%Y-%m-%d").date(),
             datetime.strptime(end_date, "%Y-%m-%d").date(),
             limit
@@ -158,7 +146,6 @@ async def get_store_ranking(
     limit: int = Query(10, ge=1, le=50),
     db: Session = Depends(get_db)
 ):
-    """Ranking das lojas por performance"""
     try:
         print(f"🏆 Buscando ranking top {limit}: {start_date} até {end_date}")
         
@@ -177,13 +164,12 @@ async def get_store_ranking(
         raise HTTPException(status_code=500, detail=f"Erro no ranking: {str(e)}")
 
 @router.get("/stores/list")
-async def get_all_stores(db_pool = Depends(get_db)):  # MUDAR para db_pool
-    """Lista todas as lojas ativas"""
+async def get_all_stores(db_pool = Depends(get_db)):
     try:
         print("🏪 Buscando lista de lojas")
         
         analytics_service = AnalyticsService(db_pool)
-        data = await analytics_service.get_all_stores()  # MUDAR: adicionar await
+        data = await analytics_service.get_all_stores()
         
         return {
             "data": data,
@@ -198,24 +184,19 @@ async def get_overview_kpis(
     days: int = Query(30, ge=1, le=365),
     db_pool = Depends(get_db)
 ):
-    """KPIs gerais para o dashboard"""
     try:
         print(f"📊 Dashboard requisitou overview: {days} dias")
         
-        # ✅ CORREÇÃO: Usar datas do período real dos dados (2025)
-        end_date = datetime(2025, 11, 3).date()  # Data do seu banco
+        end_date = datetime(2025, 11, 3).date()
         start_date = end_date - timedelta(days=days)
         
         print(f"📅 Usando período real: {start_date} até {end_date}")
         
-        # Buscar dados reais
         query_builder = QueryBuilder(db_pool)
         
-        # Buscar vendas totais
         sales_data = await query_builder.get_total_sales_period(start_date, end_date)
         total_customers_data = await query_builder.get_total_customers()
         
-        # Formatar resposta
         sales_summary = sales_data[0] if sales_data else {}
         customers_summary = total_customers_data[0] if total_customers_data else {}
         
@@ -224,11 +205,11 @@ async def get_overview_kpis(
                 "total_orders": sales_summary.get("total_orders", 0),
                 "total_revenue": float(sales_summary.get("total_revenue", 0)),
                 "avg_ticket": float(sales_summary.get("avg_ticket", 0)),
-                "unique_customers": int(sales_summary.get("total_orders", 0) * 0.7)  # Estimativa
+                "unique_customers": int(sales_summary.get("total_orders", 0) * 0.7)
             },
             "customers": {
                 "total": customers_summary.get("total_customers", 0),
-                "new_last_30d": int(customers_summary.get("total_customers", 0) * 0.03)  # Estimativa
+                "new_last_30d": int(customers_summary.get("total_customers", 0) * 0.03)
             }
         }
         
@@ -245,11 +226,9 @@ async def get_top_channels(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Performance por canal de venda - para Dashboard"""
     try:
         print(f"📊 Requisitado top-channels: {start_date} até {end_date}")
         
-        # Converter strings para date
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
@@ -269,18 +248,15 @@ async def get_total_sales(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Totais de vendas para validação - para Dashboard"""
     try:
         print(f"📊 Requisitado total-sales: {start_date} até {end_date}")
         
-        # ✅ CORREÇÃO: Usar as datas do frontend (que são de 2025)
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
         query_builder = QueryBuilder(db_pool)
         data = await query_builder.get_total_sales_period(start_dt, end_dt)
         
-        # Formatar para o formato esperado pelo frontend
         sales_summary = data[0] if data else {}
         sales_data = {
             "total_orders": sales_summary.get("total_orders", 0),
@@ -301,11 +277,9 @@ async def get_top_days(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Dias da semana com maior volume de vendas - para SalesPage"""
     try:
         print(f"📊 SalesPage: top-days para {start_date} até {end_date}")
         
-        # Converter strings para date
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
@@ -325,11 +299,9 @@ async def get_peak_hours(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Horários de pico de vendas - para SalesPage"""
     try:
         print(f"📊 SalesPage: peak-hours para {start_date} até {end_date}")
         
-        # Converter strings para date
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
@@ -349,11 +321,9 @@ async def get_cancellation_rate(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Taxa de cancelamento de pedidos - para SalesPage"""
     try:
         print(f"📊 SalesPage: cancellation-rate para {start_date} até {end_date}")
         
-        # Converter strings para date
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
@@ -373,11 +343,9 @@ async def get_top_categories(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Categorias de produtos com melhor performance - para ProductsPage"""
     try:
         print(f"🍔 ProductsPage: top-categories para {start_date} até {end_date}")
         
-        # Converter strings para date
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
@@ -397,11 +365,9 @@ async def get_top_addons(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Itens adicionais mais pedidos - para ProductsPage"""
     try:
         print(f"🍔 ProductsPage: top-addons para {start_date} até {end_date}")
         
-        # Converter strings para date
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
@@ -422,18 +388,15 @@ async def get_top_products(
     limit: int = Query(10, ge=1, le=50),
     db_pool = Depends(get_db)
 ):
-    """Produtos mais vendidos - para ProductsPage"""
     try:
         print(f"🍔 ProductsPage: top-products para {start_date} até {end_date}")
         
-        # Converter strings para date
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
         query_builder = QueryBuilder(db_pool)
         data = await query_builder.get_top_bottom_products(start_dt, end_dt)
         
-        # Filtrar apenas os top produtos (primeiros da lista)
         top_products = data[:limit] if data else []
         
         return {
@@ -449,11 +412,9 @@ async def get_avg_product_prices(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Estatísticas de preços dos produtos - para ProductsPage"""
     try:
         print(f"🍔 ProductsPage: avg-product-prices para {start_date} até {end_date}")
         
-        # Converter strings para date
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
@@ -469,7 +430,6 @@ async def get_avg_product_prices(
 
 @router.get("/total-customers")
 async def get_total_customers(db_pool = Depends(get_db)):
-    """Total de clientes cadastrados - para CustomersPage"""
     try:
         print(f"👥 CustomersPage: total-customers")
         
@@ -487,7 +447,6 @@ async def get_total_customers(db_pool = Depends(get_db)):
 
 @router.get("/promotion-optin")
 async def get_promotion_optin(db_pool = Depends(get_db)):
-    """Aceitação de promoções por email - para CustomersPage"""
     try:
         print(f"👥 CustomersPage: promotion-optin")
         
@@ -503,7 +462,6 @@ async def get_promotion_optin(db_pool = Depends(get_db)):
 
 @router.get("/customer-age-distribution")
 async def get_customer_age_distribution(db_pool = Depends(get_db)):
-    """Distribuição de clientes por faixa etária - para CustomersPage"""
     try:
         print(f"👥 CustomersPage: customer-age-distribution")
         
@@ -523,11 +481,9 @@ async def get_avg_orders_per_customer(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Média de pedidos por cliente - para CustomersPage"""
     try:
         print(f"👥 CustomersPage: avg-orders-per-customer para {start_date} até {end_date}")
         
-        # Converter strings para date
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
         
@@ -543,15 +499,12 @@ async def get_avg_orders_per_customer(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro na média de pedidos: {str(e)}")
 
-# ==================== 📊 ENDPOINTS ADICIONAIS ====================
-
 @router.get("/data-availability")
 async def get_data_availability(
     start_date: str = Query(..., description="Data inicial (YYYY-MM-DD)"),
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db_pool = Depends(get_db)
 ):
-    """Verifica se existem dados para o período solicitado"""
     try:
         start_dt = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_dt = datetime.strptime(end_date, "%Y-%m-%d").date()
@@ -582,9 +535,6 @@ async def get_data_availability(
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
-# ==================== 📊 ENDPOINTS EXISTENTES (COMPATIBILIDADE) ====================
-
-# Health check simples
 @router.get("/")
 async def analytics_root():
     return {"message": "Analytics API", "endpoints": "Use /docs para ver todos os endpoints"}

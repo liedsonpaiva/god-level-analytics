@@ -1,11 +1,8 @@
-# app/models/__init__.py
-# Modelos Pydantic para validação de dados
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from datetime import date, datetime
 from decimal import Decimal
 
-# Schemas base
 class AnalyticsResponse(BaseModel):
     data: List[Dict[str, Any]]
     insights: Optional[List[Dict[str, Any]]] = []
@@ -15,7 +12,6 @@ class DateRangeRequest(BaseModel):
     start_date: date
     end_date: date
 
-# Vendas e Desempenho
 class SalesSummaryResponse(BaseModel):
     total_orders: int
     total_revenue: float
@@ -27,7 +23,6 @@ class ChannelPerformanceResponse(BaseModel):
     total_revenue: float
     percentage: float
 
-# Produtos
 class ProductPerformanceResponse(BaseModel):
     product_name: str
     category: str
@@ -35,19 +30,16 @@ class ProductPerformanceResponse(BaseModel):
     total_quantity: int
     total_revenue: float
 
-# Clientes
 class CustomerStatsResponse(BaseModel):
     total_customers: int
     new_customers_30d: int
     promotion_optin_rate: float
 
-# Entregas
 class DeliveryPerformanceResponse(BaseModel):
     channel: str
     avg_delivery_time_seconds: float
     delivery_count: int
 
-# Pagamentos
 class PaymentMethodsResponse(BaseModel):
     payment_method: str
     transaction_count: int

@@ -1,5 +1,3 @@
-# backend/app/api/routes/overview.py - ATUALIZADO
-
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional
@@ -9,35 +7,12 @@ from ...services.analytics_service import AnalyticsService
 
 router = APIRouter()
 
-# ❌ REMOVER/COMENTAR esta rota - já existe em analytics.py
-# @router.get("/overview")
-# async def get_overview_kpis(
-#     days: int = Query(30, ge=1, le=365),
-#     db: Session = Depends(get_db)
-# ):
-#     """
-#     Retorna KPIs gerais para o dashboard
-#     """
-#     try:
-#         end_date = datetime.now()
-#         start_date = end_date - timedelta(days=days)
-        
-#         service = AnalyticsService(db)
-#         kpis = service.get_overview_kpis(start_date, end_date)
-        
-#         return kpis
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Erro ao carregar KPIs: {str(e)}")
-
 @router.get("/top-channels")
 async def get_top_channels(
     start_date: str = Query(..., description="Data inicial (YYYY-MM-DD)"),
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db: Session = Depends(get_db)
 ):
-    """
-    Retorna performance por canal de venda
-    """
     try:
         start_dt = datetime.fromisoformat(start_date)
         end_dt = datetime.fromisoformat(end_date)
@@ -59,9 +34,6 @@ async def get_total_sales(
     end_date: str = Query(..., description="Data final (YYYY-MM-DD)"),
     db: Session = Depends(get_db)
 ):
-    """
-    Retorna totais de vendas para o período
-    """
     try:
         start_dt = datetime.fromisoformat(start_date)
         end_dt = datetime.fromisoformat(end_date)

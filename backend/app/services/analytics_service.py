@@ -1,5 +1,3 @@
-# backend/app/services/analytics_service.py - ATUALIZADO
-
 import asyncpg
 from datetime import datetime
 from typing import List, Dict, Any
@@ -12,9 +10,6 @@ class AnalyticsService:
         self.db_pool = db_pool
         
     async def get_store_comparison(self, start_date: datetime, end_date: datetime, store_ids: List[int]) -> List[Dict[str, Any]]:
-        """
-        Comparação detalhada entre múltiplas lojas
-        """
         try:
             query = """
                 SELECT 
@@ -64,9 +59,6 @@ class AnalyticsService:
             raise
 
     async def get_store_regions(self, start_date: datetime, end_date: datetime) -> List[Dict[str, Any]]:
-        """
-        Agrupa métricas por região (cidade/estado)
-        """
         try:
             query = """
                 SELECT 
@@ -108,9 +100,6 @@ class AnalyticsService:
             raise
 
     async def get_store_ranking(self, start_date: datetime, end_date: datetime, limit: int = 10) -> List[Dict[str, Any]]:
-        """
-        Ranking das lojas por performance
-        """
         try:
             query = """
                 SELECT 
@@ -155,9 +144,6 @@ class AnalyticsService:
             raise
 
     async def get_all_stores(self) -> List[Dict[str, Any]]:
-        """
-        Lista todas as lojas ativas
-        """
         try:
             query = """
                 SELECT 
@@ -199,11 +185,7 @@ class AnalyticsService:
             raise
 
     async def get_overview_kpis(self, start_date: datetime, end_date: datetime) -> Dict[str, Any]:
-        """
-        Retorna KPIs principais para o dashboard
-        """
         try:
-            # Query para vendas no período
             sales_query = """
                 SELECT 
                     COUNT(*) as total_orders,
@@ -216,7 +198,6 @@ class AnalyticsService:
             
             sales_result = await self.db_pool.fetchrow(sales_query, start_date, end_date)
 
-            # Query para total de clientes
             customers_query = """
                 SELECT COUNT(*) as total_customers
                 FROM customers
@@ -225,7 +206,6 @@ class AnalyticsService:
             
             customers_result = await self.db_pool.fetchrow(customers_query, end_date)
 
-            # Query para novos clientes últimos 30 dias
             new_customers_query = """
                 SELECT COUNT(*) as new_customers
                 FROM customers
@@ -252,9 +232,6 @@ class AnalyticsService:
             raise
 
     async def get_channel_performance(self, start_date: datetime, end_date: datetime) -> List[Dict[str, Any]]:
-        """
-        Retorna performance por canal de venda
-        """
         try:
             query = """
                 SELECT 
@@ -293,9 +270,6 @@ class AnalyticsService:
             raise
 
     async def get_sales_totals(self, start_date: datetime, end_date: datetime) -> List[Dict[str, Any]]:
-        """
-        Retorna totais de vendas para validação
-        """
         try:
             query = """
                 SELECT 
@@ -319,9 +293,6 @@ class AnalyticsService:
             raise
 
     def generate_channel_insights(self, channels_data: List[Dict]) -> List[Dict[str, Any]]:
-        """
-        Gera insights automáticos baseados nos dados dos canais
-        """
         insights = []
         
         if not channels_data:
@@ -330,7 +301,6 @@ class AnalyticsService:
         total_orders = sum(channel['order_count'] for channel in channels_data)
         
         if total_orders > 0:
-            # Insight do canal principal
             top_channel = channels_data[0]
             if top_channel['percentage'] > 40:
                 insights.append({
@@ -339,7 +309,6 @@ class AnalyticsService:
                     "message": f"{top_channel['channel']} representa {top_channel['percentage']}% das vendas"
                 })
             
-            # Insight de balanceamento
             if len(channels_data) >= 3:
                 top_3_percentage = sum(channel['percentage'] for channel in channels_data[:3])
                 if top_3_percentage > 80:

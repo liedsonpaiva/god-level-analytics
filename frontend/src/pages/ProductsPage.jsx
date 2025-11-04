@@ -18,7 +18,6 @@ export function ProductsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // ✅ Efeito para mostrar erro de período do contexto
   useEffect(() => {
     if (dateError) {
       setError(dateError)
@@ -39,7 +38,6 @@ export function ProductsPage() {
   }
 
   const loadProductsData = async () => {
-    // ✅ Não carregar dados se há erro de período
     if (dateError) {
       return
     }
@@ -80,7 +78,6 @@ export function ProductsPage() {
     } catch (error) {
       console.error('❌ Erro ao carregar dados de produtos:', error)
       
-      // ✅ Remover tratamento duplicado do período longo (agora é tratado no contexto)
       setError('Erro ao carregar dados do servidor. Verifique se o backend está rodando.')
       
       setTopCategories([])
@@ -94,13 +91,11 @@ export function ProductsPage() {
   }
 
   const handleRetry = () => {
-    // ✅ Limpar erro do contexto também
     clearDateError()
     setError(null)
     loadProductsData()
   }
 
-  // Calcular totais baseados nos dados reais
   const totalProductOrders = topCategories.reduce((sum, cat) => sum + (cat.order_count || 0), 0)
   const totalAddonsSold = topAddons.reduce((sum, addon) => sum + (addon.times_added || 0), 0)
   const dailyAverage = Math.floor(totalProductOrders / 30)
@@ -134,7 +129,6 @@ export function ProductsPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* KPIs de Produtos */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="text-center">
             <div className="text-2xl font-bold text-primary-600">
@@ -178,7 +172,6 @@ export function ProductsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Categorias com Maior Receita */}
           <Card title="Categorias com Maior Receita">
             {topCategories.length > 0 ? (
               <SimpleBarChart
@@ -195,7 +188,6 @@ export function ProductsPage() {
             )}
           </Card>
 
-          {/* Itens Adicionais Mais Pedidos */}
           <Card title="Itens Adicionais Mais Pedidos">
             {topAddons.length > 0 ? (
               <SimpleBarChart
@@ -213,7 +205,6 @@ export function ProductsPage() {
           </Card>
         </div>
 
-        {/* Tabela de Produtos Mais Vendidos */}
         <Card title="Produtos Mais Vendidos" className="mt-8">
           {topProducts.length > 0 ? (
             <div className="overflow-x-auto">
@@ -267,7 +258,6 @@ export function ProductsPage() {
           )}
         </Card>
 
-        {/* Estatísticas de Preços */}
         {avgProductPrices.avg_price && (
           <Card title="Estatísticas de Preços" className="mt-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

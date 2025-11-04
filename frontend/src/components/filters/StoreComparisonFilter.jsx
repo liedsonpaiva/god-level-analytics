@@ -1,4 +1,3 @@
-// frontend/src/components/filters/StoreComparisonFilter.jsx - NOVO ARQUIVO
 import React, { useState } from 'react'
 import { useStore } from '../../contexts/StoreContext.jsx'
 
@@ -14,9 +13,8 @@ export function StoreComparisonFilter() {
   } = useStore()
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [groupBy, setGroupBy] = useState('all') // 'all', 'city', 'state'
+  const [groupBy, setGroupBy] = useState('all')
 
-  // Agrupar lojas por região
   const groupedStores = allStores.reduce((acc, store) => {
     const key = groupBy === 'city' ? store.city : 
                 groupBy === 'state' ? store.state : 'all'
@@ -28,7 +26,6 @@ export function StoreComparisonFilter() {
     return acc
   }, {})
 
-  // Filtrar lojas por busca
   const filteredStores = allStores.filter(store =>
     store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     store.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -61,7 +58,6 @@ export function StoreComparisonFilter() {
 
   return (
     <div className="bg-white rounded-lg shadow-sm border p-4">
-      {/* Cabeçalho */}
       <div className="flex justify-between items-center mb-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">
@@ -82,7 +78,6 @@ export function StoreComparisonFilter() {
         )}
       </div>
 
-      {/* Busca e Agrupamento */}
       <div className="space-y-3 mb-4">
         <input
           type="text"
@@ -126,10 +121,8 @@ export function StoreComparisonFilter() {
         </div>
       </div>
 
-      {/* Lista de Lojas */}
       <div className="max-h-80 overflow-y-auto space-y-2">
         {groupBy === 'all' ? (
-          // Lista plana
           filteredStores.map(store => (
             <StoreCheckbox
               key={store.id}
@@ -139,7 +132,6 @@ export function StoreComparisonFilter() {
             />
           ))
         ) : (
-          // Lista agrupada
           Object.entries(groupedStores).map(([group, stores]) => (
             <div key={group} className="border rounded-lg">
               <div className="bg-gray-50 px-3 py-2 border-b">
@@ -179,7 +171,6 @@ export function StoreComparisonFilter() {
   )
 }
 
-// Componente auxiliar para checkbox de loja
 function StoreCheckbox({ store, isSelected, onToggle }) {
   return (
     <label className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">

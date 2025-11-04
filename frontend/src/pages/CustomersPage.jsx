@@ -18,7 +18,6 @@ export function CustomersPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // ✅ Efeito para mostrar erro de período do contexto
   useEffect(() => {
     if (dateError) {
       setError(dateError)
@@ -39,7 +38,6 @@ export function CustomersPage() {
   }
 
   const loadCustomersData = async () => {
-    // ✅ Não carregar dados se há erro de período
     if (dateError) {
       return
     }
@@ -75,7 +73,6 @@ export function CustomersPage() {
     } catch (error) {
       console.error('❌ Erro ao carregar dados de clientes:', error)
       
-      // ✅ Remover tratamento duplicado do período longo (agora é tratado no contexto)
       setError('Erro ao carregar dados do servidor. Verifique se o backend está rodando.')
       
       setTotalCustomers({})
@@ -89,13 +86,11 @@ export function CustomersPage() {
   }
 
   const handleRetry = () => {
-    // ✅ Limpar erro do contexto também
     clearDateError()
     setError(null)
     loadCustomersData()
   }
 
-  // Calcular totais baseados nos dados reais
   const totalCustomersCount = totalCustomers.total_customers || 0
   const newCustomersCount = totalCustomers.new_customers_30d || 0
   const avgOrdersPerCustomer = avgOrders.avg_orders_per_customer || avgOrders.avg_orders_per_customer_monthly || 0
@@ -129,7 +124,6 @@ export function CustomersPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* KPIs de Clientes */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="text-center">
             <div className="text-2xl font-bold text-primary-600">
@@ -163,7 +157,6 @@ export function CustomersPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Aceitação de Promoções */}
           <Card title="Aceitação de Promoções por Email">
             {promotionOptin.length > 0 ? (
               <div>
@@ -193,7 +186,6 @@ export function CustomersPage() {
             )}
           </Card>
 
-          {/* Distribuição por Idade */}
           <Card title="Distribuição por Faixa Etária">
             {ageDistribution.length > 0 ? (
               <SimpleBarChart
@@ -211,7 +203,6 @@ export function CustomersPage() {
           </Card>
         </div>
 
-        {/* Tabela de Detalhes por Idade */}
         {ageDistribution.length > 0 && (
           <Card title="Detalhes por Faixa Etária" className="mt-8">
             <div className="overflow-x-auto">
@@ -261,7 +252,6 @@ export function CustomersPage() {
           </Card>
         )}
 
-        {/* Insights de Clientes */}
         <Card title="Insights de Clientes" className="mt-8">
           <div className="space-y-3">
             {newCustomersCount > 0 && (
@@ -314,7 +304,6 @@ export function CustomersPage() {
           </div>
         </Card>
 
-        {/* Informações do Período */}
         <Card title="Informações do Período" className="mt-8">
           <div className="space-y-4 py-4">
             <div className="flex justify-between">

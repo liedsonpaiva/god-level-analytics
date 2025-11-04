@@ -6,35 +6,32 @@ from app.api.routes import analytics
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="GodLevelAnalytics - Sistema de análise para restaurantes", 
+    description="GodLevelAnalytics - Sistema de análise para restaurantes",
     version="1.0.0"
 )
 
-# CORS - ATUALIZAR PARA O PORT DO VITE
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173", 
+        "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:3000",
         "http://127.0.0.1:3000"
-    ],  # Vite e React
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Event handlers
 @app.on_event("startup")
 async def startup():
     await database.connect()
     print("🚀 Backend iniciado e conectado ao banco!")
 
-@app.on_event("shutdown") 
+@app.on_event("shutdown")
 async def shutdown():
     await database.disconnect()
 
-# Routes
 app.include_router(analytics.router, prefix=settings.API_V1_STR)
 
 @app.get("/")

@@ -31,7 +31,6 @@ export function Dashboard() {
   const [error, setError] = useState(null)
   const [dataStatus, setDataStatus] = useState('checking')
 
-  // ✅ Efeito para mostrar erro de período do contexto
   useEffect(() => {
     if (dateError) {
       setError(dateError)
@@ -67,7 +66,6 @@ export function Dashboard() {
   }
 
   const loadDashboardData = async () => {
-    // ✅ Não carregar dados se há erro de período
     if (dateError) {
       return
     }
@@ -129,7 +127,6 @@ export function Dashboard() {
       console.error('❌ Erro ao carregar dados reais:', error)
       setDataStatus('error')
       
-      // ✅ Remover tratamento duplicado do período longo (agora é tratado no contexto)
       if (error.response?.status === 404) {
         setError('Endpoints não encontrados. Verifique se o backend está com as rotas corretas.')
       } else if (error.response?.status === 500) {
@@ -145,7 +142,6 @@ export function Dashboard() {
   }
 
   const handleRetry = () => {
-    // ✅ Limpar erro do contexto também
     clearDateError()
     setError(null)
     loadDashboardData()
