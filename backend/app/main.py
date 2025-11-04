@@ -1,43 +1,46 @@
 from fastapi import FastAPI
-from sqlmodel import SQLModel
+from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.core.middleware import setup_cors
-from app.core.connect import engine
-from app.api import api_router
+from app.core.database import database
+from app.api.routes import analytics
 
-def create_app() -> FastAPI:
-    app = FastAPI(
-        title="GodLevel Analytics API", 
-        version="1.0.0",
-        docs_url="/docs",  # Habilita Swagger UI
-        redoc_url="/redoc"  # Habilita Redoc
-    )
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    description="GodLevelAnalytics - Sistema de análise para restaurantes", 
+    version="1.0.0"
+)
 
-    # 🔧 CORS configurado de forma organizada
-    setup_cors(app)
+# CORS - ATUALIZAR PARA O PORT DO VITE
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173", 
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"
+    ],  # Vite e React
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    @app.on_event("startup")
-    def on_startup():
-        SQLModel.metadata.create_all(engine)
-        print("✅ Banco de dados conectado e tabelas criadas/verificadas.")
+# Event handlers
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+    print("🚀 Backend iniciado e conectado ao banco!")
 
-    # Rota raiz
-    @app.get("/")
-    def read_root():
-        return {"message": "GodLevel Analytics API - Acesse /docs para documentação"}
+@app.on_event("shutdown") 
+async def shutdown():
+    await database.disconnect()
 
-    # Health check
-    @app.get("/health")
-    def health_check():
-        return {"status": "healthy", "database": "connected"}
+# Routes
+app.include_router(analytics.router, prefix=settings.API_V1_STR)
 
-    # Inclui todas as rotas da API
-    app.include_router(api_router, prefix="/api")
+@app.get("/")
+async def root():
+    return {"message": "GodLevelAnalytics API", "version": "1.0.0"}
 
-    return app
-
-app = create_app()
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "database": "connected"}

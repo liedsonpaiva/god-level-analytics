@@ -1,32 +1,55 @@
-# Core models
-from .core.sales import Sale, ProductSale, ItemProductSale, ItemItemProductSale
-from .core.products import Product, Item
+# app/models/__init__.py
+# Modelos Pydantic para validação de dados
+from pydantic import BaseModel
+from typing import Optional, List, Dict, Any
+from datetime import date, datetime
+from decimal import Decimal
 
-# Catalog models
-from .catalog.brands import Brand, SubBrand
-from .catalog.stores import Store, Channel
-from .catalog.categories import Category, OptionGroup
-from .catalog.customers import Customer
+# Schemas base
+class AnalyticsResponse(BaseModel):
+    data: List[Dict[str, Any]]
+    insights: Optional[List[Dict[str, Any]]] = []
+    summary: Optional[Dict[str, Any]] = {}
 
-# Operations models
-from .operations.delivery import DeliverySale, DeliveryAddress
-from .operations.payments import Payment, PaymentType
+class DateRangeRequest(BaseModel):
+    start_date: date
+    end_date: date
 
-# Promotions models
-from .promotions.coupons import Coupon, CouponSale
+# Vendas e Desempenho
+class SalesSummaryResponse(BaseModel):
+    total_orders: int
+    total_revenue: float
+    avg_ticket: float
 
-__all__ = [
-    # Core
-    "Sale", "ProductSale", "ItemProductSale", "ItemItemProductSale",
-    "Product", "Item",
-    
-    # Catalog
-    "Brand", "SubBrand", "Store", "Channel", 
-    "Category", "OptionGroup", "Customer",
-    
-    # Operations
-    "DeliverySale", "DeliveryAddress", "Payment", "PaymentType",
-    
-    # Promotions
-    "Coupon", "CouponSale"
-]
+class ChannelPerformanceResponse(BaseModel):
+    channel: str
+    order_count: int
+    total_revenue: float
+    percentage: float
+
+# Produtos
+class ProductPerformanceResponse(BaseModel):
+    product_name: str
+    category: str
+    times_ordered: int
+    total_quantity: int
+    total_revenue: float
+
+# Clientes
+class CustomerStatsResponse(BaseModel):
+    total_customers: int
+    new_customers_30d: int
+    promotion_optin_rate: float
+
+# Entregas
+class DeliveryPerformanceResponse(BaseModel):
+    channel: str
+    avg_delivery_time_seconds: float
+    delivery_count: int
+
+# Pagamentos
+class PaymentMethodsResponse(BaseModel):
+    payment_method: str
+    transaction_count: int
+    total_amount: float
+    percentage: float
