@@ -1,4 +1,3 @@
--- Formas de pagamento mais usadas - CORRIGIDO
 SELECT 
     pt.description as payment_method,
     COUNT(*) as transaction_count,

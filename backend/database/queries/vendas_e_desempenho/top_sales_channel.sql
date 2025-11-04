@@ -1,4 +1,3 @@
--- Canal de venda com mais pedidos - CORRIGIDO
 SELECT 
     c.name as channel,
     COUNT(*) as order_count,

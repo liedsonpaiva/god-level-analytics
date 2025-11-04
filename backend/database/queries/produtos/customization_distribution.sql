@@ -1,4 +1,3 @@
--- Personalização vs sem personalização - CORRIGIDO
 WITH sales_customization AS (
     SELECT 
         s.id,

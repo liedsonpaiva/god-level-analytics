@@ -1,4 +1,3 @@
--- Valor total por método - CORRIGIDO
 SELECT 
     pt.description as payment_method,
     SUM(p.value) as total_amount,

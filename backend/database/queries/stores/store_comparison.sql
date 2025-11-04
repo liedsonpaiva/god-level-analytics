@@ -1,4 +1,3 @@
--- backend/database/queries/stores/store_comparison.sql
 SELECT 
     s.id as store_id,
     s.name as store_name,

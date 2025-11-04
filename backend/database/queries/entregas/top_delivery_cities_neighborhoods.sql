@@ -1,4 +1,3 @@
--- Cidades/bairros com mais entregas - CORRIGIDO
 SELECT 
     da.city,
     da.neighborhood,

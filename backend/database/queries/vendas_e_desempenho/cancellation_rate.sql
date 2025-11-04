@@ -1,4 +1,3 @@
--- Percentual de vendas canceladas - CORRIGIDO
 SELECT 
     sale_status_desc as status,
     COUNT(*) as order_count,

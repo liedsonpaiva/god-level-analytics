@@ -1,4 +1,3 @@
--- Aceitação de promoções por email - CORRIGIDO (SEM parâmetros)
 SELECT 
     receive_promotions_email as accepts_promotions,
     COUNT(*) as customer_count,

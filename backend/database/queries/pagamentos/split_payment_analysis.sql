@@ -1,4 +1,3 @@
--- Pagamentos divididos - CORRIGIDO
 WITH split_payments AS (
     SELECT 
         sale_id,

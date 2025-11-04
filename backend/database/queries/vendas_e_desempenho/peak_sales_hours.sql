@@ -1,4 +1,3 @@
--- Horário de pico de vendas - CORRIGIDO
 SELECT 
     EXTRACT(HOUR FROM s.created_at) as hour_of_day,
     COUNT(*) as order_count,

@@ -1,4 +1,3 @@
--- Pedidos médios por cliente - CORRIGIDO
 WITH customer_monthly_orders AS (
     SELECT 
         c.id,

@@ -1,4 +1,3 @@
--- Dia da semana com maior volume - CORRIGIDO
 SELECT 
     EXTRACT(DOW FROM s.created_at) as day_of_week,
     CASE EXTRACT(DOW FROM s.created_at)

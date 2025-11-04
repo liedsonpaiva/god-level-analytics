@@ -1,4 +1,3 @@
--- Valor médio das taxas - CORRIGIDO
 SELECT 
     AVG(delivery_fee) as avg_delivery_fee,
     AVG(service_tax_fee) as avg_service_fee,

@@ -1,4 +1,3 @@
--- backend/database/queries/stores/store_regions.sql
 SELECT 
     s.city,
     s.state,

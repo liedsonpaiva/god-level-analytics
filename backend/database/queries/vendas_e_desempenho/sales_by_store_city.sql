@@ -1,4 +1,3 @@
--- Vendas por cidade/loja - CORRIGIDO
 SELECT 
     st.name as store_name,
     st.city,

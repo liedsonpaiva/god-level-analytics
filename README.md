@@ -1,4 +1,5 @@
 # 🍔 GodLevelAnalytics — Business Intelligence para Food Service
+
 > **GodLevelAnalytics** é uma plataforma de **Business Intelligence** e **Data Analytics** desenvolvida para o setor de **Food Service**, permitindo análise operacional e estratégica de grandes volumes de dados de restaurantes.  
 > Com arquitetura monolítica moderna (FastAPI + React + PostgreSQL), o sistema transforma dados em **insights acionáveis**, ajudando gestores a tomarem decisões rápidas e embasadas.
 
@@ -6,16 +7,18 @@
 
 ## 🧩 Sumário
 - [Contexto](#contexto)
-- [Problema do Desafio](#problema-do-desafio)
-- [Solução Proposta](#solução-proposta)
-- [Funcionalidades Principais](#funcionalidades-principais)
-- [Arquitetura do Sistema](#arquitetura-do-sistema)
-- [Stack Tecnológica](#stack-tecnológica)
-- [Como Executar Localmente](#como-executar-localmente)
-- [Dataset Realista](#dataset-realista)
-- [KPIs e Métricas Monitoradas](#kpis-e-métricas-monitoradas)
-- [Roadmap Futuro](#roadmap-futuro)
-- [Licença](#licença)
+- [Problema do Desafio](#-problema-do-desafio)
+- [Solução Proposta](#-solução-proposta)
+- [Funcionalidades Principais](#-funcionalidades-principais)
+- [Arquitetura do Sistema](#️-arquitetura-do-sistema)
+- [Stack Tecnológica](#-stack-tecnológica)
+- [Como Executar](#-como-executar)
+- [Docker (Recomendado)](#-docker-recomendado)
+- [Desenvolvimento Local](#-desenvolvimento-local)
+- [Dataset Realista](#-dataset-realista)
+- [KPIs e Métricas Monitoradas](#-kpis-e-métricas-monitoradas)
+- [Roadmap Futuro](#-roadmap-futuro)
+- [Licença](#-licença)
 
 ---
 
@@ -25,9 +28,9 @@ donos e gestores possuem **muitos dados**, mas **pouca inteligência sobre eles*
 
 A persona central é **Maria**, dona de três restaurantes em São Paulo, que vende por múltiplos canais (iFood, Rappi, balcão, WhatsApp e app próprio).  
 Apesar de ter milhares de registros de vendas, **Maria não consegue responder perguntas simples como**:
-- “Quais produtos mais vendem às quintas à noite?”
-- “Meu ticket médio está caindo — é por canal ou por loja?”
-- “Quais clientes compraram 3+ vezes e não voltaram há 30 dias?”
+- "Quais produtos mais vendem às quintas à noite?"
+- "Meu ticket médio está caindo — é por canal ou por loja?"
+- "Quais clientes compraram 3+ vezes e não voltaram há 30 dias?"
 
 ---
 
@@ -71,8 +74,8 @@ O **GodLevelAnalytics** entrega um **sistema completo de Business Intelligence**
 ### 🤖 Insight Detector
 - Sistema de regras automatizado que gera **alertas de oportunidades e anomalias**.
 - Exemplo:  
-  - “O canal iFood concentrou 60% das vendas semanais.”  
-  - “Produto X teve queda de 25% no último mês.”
+  - "O canal iFood concentrou 60% das vendas semanais."  
+  - "Produto X teve queda de 25% no último mês."
 
 ### 📤 Exportação e Compartilhamento
 - Filtros avançados por **loja, canal, período e região**.  
@@ -83,6 +86,7 @@ O **GodLevelAnalytics** entrega um **sistema completo de Business Intelligence**
 ## 🏗️ Arquitetura do Sistema
 O sistema segue uma **arquitetura monolítica modular** com separação clara entre frontend, backend e banco de dados.
 
+
 godlevelanalytics/
 ├── backend/ # API FastAPI + PostgreSQL
 │ ├── app/main.py
@@ -92,7 +96,8 @@ godlevelanalytics/
 │ ├── src/
 │ ├── components/
 │ └── services/
-└── docs/ # Documentação técnica 
+└── docs/ # Documentação técnica
+
 
 
 ### 🔄 Fluxo de Dados
@@ -116,14 +121,11 @@ godlevelanalytics/
 
 ---
 
-## ⚙️ Como Executar Localmente
+## ⚙️ Como Executar
 
-### 🧾 Pré-requisitos
-- Docker e Docker Compose instalados  
-- 4 GB de RAM disponíveis  
-- 2 GB de espaço em disco  
+### 🐳 Docker (Recomendado)
+**Pré-requisitos:** Docker e Docker Compose instalados
 
-### 🚀 Execução Rápida
 ```bash
 # Clone o repositório
 git clone <seu-repositorio>
@@ -131,3 +133,35 @@ cd godlevelanalytics/backend
 
 # Execute tudo com um único comando
 docker-compose up --build
+
+# Acesse:
+# 📊 Frontend: http://localhost:3000
+# 📡 API Docs: http://localhost:8000/docs  
+# 🗄️  Database: http://localhost:8080 (pgAdmin - admin@admin.com / admin)
+
+Desenvolvimento Local
+Solução: Abra DOIS terminais simultaneamente
+
+Terminal 1 - Backend:
+# Na pasta raiz do projeto
+uvicorn godlevelanalytics.backend.app.main:app --reload
+
+# Backend rodando em: http://localhost:8000
+# API Docs: http://localhost:8000/docs
+
+Terminal 2 - Frontend:
+
+# Abra um NOVO terminal (Ctrl+Shift+` no VS Code)
+cd godlevelanalytics/frontend
+npm install
+npm run dev
+
+# Frontend rodando em: http://localhost:5173
+
+URLs de Acesso:
+
+Frontend: http://localhost:5173
+
+Backend: http://localhost:8000
+
+API Documentation: http://localhost:8000/docs

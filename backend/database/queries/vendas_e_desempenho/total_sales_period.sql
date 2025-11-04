@@ -1,4 +1,3 @@
--- Total de vendas em período - CORRIGIDO
 SELECT 
     COUNT(*) as total_orders,
     SUM(total_amount) as total_revenue,

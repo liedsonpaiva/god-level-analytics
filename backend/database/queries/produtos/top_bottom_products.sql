@@ -1,4 +1,3 @@
--- Produtos mais vendidos e com menor saída
 WITH product_sales AS (
     SELECT 
         p.id,

@@ -1,4 +1,3 @@
-// frontend/src/App.jsx - ATUALIZAR
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom'
 import { Dashboard } from './pages/Dashboard.jsx'
@@ -6,15 +5,14 @@ import { SalesPage } from './pages/SalesPage.jsx'
 import { ProductsPage } from './pages/ProductsPage.jsx'
 import { CustomersPage } from './pages/CustomersPage.jsx'
 import { ReportsPage } from './pages/ReportsPage.jsx'
-import { ComparisonDashboard } from './pages/ComparisonDashboard.jsx' // ✅ NOVO
+import { ComparisonDashboard } from './pages/ComparisonDashboard.jsx'
 import { DateProvider } from './contexts/DateContext.jsx'
-import { StoreProvider } from './contexts/StoreContext.jsx' // ✅ NOVO
+import { StoreProvider } from './contexts/StoreContext.jsx'
 
-// Componente de Layout com Navegação
 const Layout = ({ children }) => {
   const navItems = [
     { path: '/', label: 'Dashboard', emoji: '📊' },
-    { path: '/comparacao', label: 'Comparação', emoji: '🏪' }, // ✅ NOVO
+    { path: '/comparacao', label: 'Comparação', emoji: '🏪' },
     { path: '/vendas', label: 'Vendas', emoji: '💰' },
     { path: '/produtos', label: 'Produtos', emoji: '🍔' },
     { path: '/clientes', label: 'Clientes', emoji: '👥' },
@@ -23,7 +21,6 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header com Navegação */}
       <nav className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -54,12 +51,12 @@ const Layout = ({ children }) => {
 function App() {
   return (
     <DateProvider>
-      <StoreProvider> {/* ✅ NOVO */}
+      <StoreProvider>
         <Router>
           <Layout>
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/comparacao" element={<ComparisonDashboard />} /> {/* ✅ NOVO */}
+              <Route path="/comparacao" element={<ComparisonDashboard />} />
               <Route path="/vendas" element={<SalesPage />} />
               <Route path="/produtos" element={<ProductsPage />} />
               <Route path="/clientes" element={<CustomersPage />} />
@@ -68,7 +65,7 @@ function App() {
             </Routes>
           </Layout>
         </Router>
-      </StoreProvider> {/* ✅ NOVO */}
+      </StoreProvider>
     </DateProvider>
   )
 }

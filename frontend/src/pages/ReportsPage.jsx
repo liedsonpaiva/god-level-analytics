@@ -19,7 +19,6 @@ export function ReportsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // ✅ Efeito para mostrar erro de período do contexto
   useEffect(() => {
     if (dateError) {
       setError(dateError)
@@ -40,7 +39,6 @@ export function ReportsPage() {
   }
 
   const loadReportsData = async () => {
-    // ✅ Não carregar dados se há erro de período
     if (dateError) {
       return
     }
@@ -81,7 +79,6 @@ export function ReportsPage() {
     } catch (error) {
       console.error('❌ Erro ao carregar dados de relatórios:', error)
       
-      // ✅ Remover tratamento duplicado do período longo (agora é tratado no contexto)
       setError('Erro ao carregar dados do servidor. Verifique se o backend está rodando.')
       
       setSalesTrend([])
@@ -95,7 +92,6 @@ export function ReportsPage() {
   }
 
   const handleRetry = () => {
-    // ✅ Limpar erro do contexto também
     clearDateError()
     setError(null)
     loadReportsData()
@@ -148,7 +144,6 @@ export function ReportsPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* KPIs de Relatórios */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="text-center">
             <div className="text-2xl font-bold text-primary-600">
@@ -192,7 +187,6 @@ export function ReportsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Tendência de Vendas */}
           <Card title="Tendência de Vendas ao Longo do Período">
             {salesTrend.length > 0 ? (
               <SimpleBarChart
@@ -209,7 +203,6 @@ export function ReportsPage() {
             )}
           </Card>
 
-          {/* Métodos de Pagamento */}
           <Card title="Distribuição por Método de Pagamento">
             {paymentMethods.length > 0 ? (
               <SimplePieChart
@@ -225,9 +218,7 @@ export function ReportsPage() {
           </Card>
         </div>
 
-        {/* Segunda Linha de Gráficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-          {/* Status dos Pedidos */}
           <Card title="Status dos Pedidos">
             {orderStatus.length > 0 ? (
               <SimpleBarChart
@@ -244,7 +235,6 @@ export function ReportsPage() {
             )}
           </Card>
 
-          {/* Retenção de Clientes */}
           <Card title="Retenção de Clientes">
             {customerRetention.retention_rate ? (
               <div className="space-y-4 py-4">
@@ -277,7 +267,6 @@ export function ReportsPage() {
           </Card>
         </div>
 
-        {/* Tabela de Tendências Detalhadas */}
         {salesTrend.length > 0 && (
           <Card title="Tendência Diária de Vendas" className="mt-8">
             <div className="overflow-x-auto">
@@ -327,7 +316,6 @@ export function ReportsPage() {
           </Card>
         )}
 
-        {/* Informações do Período */}
         <Card title="Informações do Período Analisado" className="mt-8">
           <div className="space-y-4 py-4">
             <div className="flex justify-between">

@@ -1,5 +1,3 @@
-// frontend/src/services/api.js - ATUALIZADO E COMPLETO
-
 import axios from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -9,7 +7,6 @@ const api = axios.create({
   timeout: 30000,
 })
 
-// Interceptor para logging
 api.interceptors.request.use(
   (config) => {
     console.log(`🔄 API Request: ${config.method?.toUpperCase()} ${config.url}`)
@@ -32,9 +29,7 @@ api.interceptors.response.use(
   }
 )
 
-
 export const analyticsService = {
-  // ==================== 🏪 STORE COMPARISON ENDPOINTS ====================
   getStoreComparison: async (startDate, endDate, storeIds) => {
     const response = await api.get('/analytics/stores/comparison', {
       params: { 
@@ -65,7 +60,6 @@ export const analyticsService = {
     return response
   },
 
-  // ==================== 📊 DASHBOARD ENDPOINTS ====================
   getOverviewKpis: async (days = 30) => {
     const response = await api.get('/analytics/overview', {
       params: { days }
@@ -87,7 +81,6 @@ export const analyticsService = {
     return response
   },
 
-  // ==================== 📈 SALES ENDPOINTS ====================
   getTopDays: async (startDate, endDate) => {
     const response = await api.get('/analytics/top-days', {
       params: { start_date: startDate, end_date: endDate }
@@ -109,7 +102,6 @@ export const analyticsService = {
     return response
   },
 
-  // Endpoints existentes da SalesPage (se ainda forem usados)
   getSalesPerformance: async (startDate, endDate, channel = null) => {
     const params = { start_date: startDate, end_date: endDate }
     if (channel) params.channel = channel
@@ -124,7 +116,6 @@ export const analyticsService = {
     return response
   },
 
-  // ==================== 🍔 PRODUCTS ENDPOINTS ====================
   getTopCategories: async (startDate, endDate) => {
     const response = await api.get('/analytics/top-categories', {
       params: { start_date: startDate, end_date: endDate }
@@ -153,7 +144,6 @@ export const analyticsService = {
     return response
   },
 
-  // Endpoints existentes da ProductsPage (se ainda forem usados)
   getProductCategories: async (startDate, endDate) => {
     const response = await api.get('/analytics/products/top-categories', {
       params: { start_date: startDate, end_date: endDate }
@@ -161,7 +151,6 @@ export const analyticsService = {
     return response
   },
 
-  // ==================== 👥 CUSTOMERS ENDPOINTS ====================
   getTotalCustomers: async () => {
     const response = await api.get('/analytics/total-customers')
     return response
@@ -184,7 +173,6 @@ export const analyticsService = {
     return response
   },
 
-  // Endpoints existentes da CustomersPage (se ainda forem usados)
   getCustomerMetrics: async (startDate, endDate) => {
     const response = await api.get('/analytics/customer-metrics', {
       params: { start_date: startDate, end_date: endDate }
@@ -197,7 +185,6 @@ export const analyticsService = {
     return response
   },
 
-  // ==================== 🚚 DELIVERY ENDPOINTS ====================
   getAvgDeliveryTime: async (startDate, endDate) => {
     const response = await api.get('/analytics/delivery/avg-time-by-channel', {
       params: { start_date: startDate, end_date: endDate }
@@ -205,7 +192,6 @@ export const analyticsService = {
     return response
   },
 
-  // ==================== 💳 PAYMENTS ENDPOINTS ====================
   getPaymentMethods: async (startDate, endDate) => {
     const response = await api.get('/analytics/payments/top-methods', {
       params: { start_date: startDate, end_date: endDate }
@@ -213,7 +199,6 @@ export const analyticsService = {
     return response
   },
 
-  // ==================== 📋 RELATÓRIOS ENDPOINTS ====================
   generateReport: async (reportType, startDate, endDate, format = 'pdf') => {
     const response = await api.post('/analytics/generate-report', {
       report_type: reportType,
@@ -224,7 +209,6 @@ export const analyticsService = {
     return response
   },
 
-    // ✅ NOVO: Verificar disponibilidade de dados
   checkDataAvailability: async (startDate, endDate) => {
     const response = await api.get('/analytics/data-availability', {
       params: { start_date: startDate, end_date: endDate }
@@ -232,7 +216,6 @@ export const analyticsService = {
     return response
   },
 
-  // ✅ NOVO: Buscar período real de dados
   getDataDateRange: async () => {
     const response = await api.get('/analytics/data-range')
     return response

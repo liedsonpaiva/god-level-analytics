@@ -1,4 +1,3 @@
--- Produtos mais e menos vendidos - CORRIGIDO
 WITH product_sales AS (
     SELECT 
         p.id,

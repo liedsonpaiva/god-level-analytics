@@ -18,7 +18,6 @@ export function SalesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // ✅ Efeito para mostrar erro de período do contexto
   useEffect(() => {
     if (dateError) {
       setError(dateError)
@@ -38,7 +37,6 @@ export function SalesPage() {
   }
 
   const loadSalesData = async () => {
-    // ✅ Não carregar dados se há erro de período
     if (dateError) {
       return
     }
@@ -73,7 +71,6 @@ export function SalesPage() {
     } catch (error) {
       console.error('❌ Erro ao carregar dados de vendas:', error)
       
-      // ✅ Remover tratamento duplicado do período longo (agora é tratado no contexto)
       if (error.response?.status === 404) {
         setError('Serviço temporariamente indisponível')
       } else {
@@ -95,7 +92,6 @@ export function SalesPage() {
   }
 
   const handleRetry = () => {
-    // ✅ Limpar erro do contexto também
     clearDateError()
     setError(null)
     loadSalesData()

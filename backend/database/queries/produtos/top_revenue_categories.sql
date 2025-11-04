@@ -1,4 +1,3 @@
--- Categorias que geram mais receita - CORRIGIDO
 SELECT 
     cat.name as category_name,
     COUNT(ps.id) as order_count,

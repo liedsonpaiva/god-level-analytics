@@ -1,4 +1,3 @@
--- Tipo de entrega mais comum - CORRIGIDO
 SELECT 
     ds.delivery_type,
     COUNT(*) as order_count,

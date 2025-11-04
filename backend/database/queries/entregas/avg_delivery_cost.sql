@@ -1,4 +1,3 @@
--- Custo médio com entregadores - CORRIGIDO
 SELECT 
     AVG(ds.courier_fee) as avg_delivery_cost,
     SUM(ds.courier_fee) as total_delivery_costs,

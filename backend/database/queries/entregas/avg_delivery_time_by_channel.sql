@@ -1,4 +1,3 @@
--- Tempo médio de entrega por canal - CORRIGIDO
 SELECT 
     c.name as channel,
     AVG(s.delivery_seconds) as avg_delivery_time_seconds,

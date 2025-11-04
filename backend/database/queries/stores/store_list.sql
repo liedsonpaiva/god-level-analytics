@@ -1,4 +1,3 @@
--- backend/database/queries/stores/store_list.sql
 SELECT 
     s.id,
     s.name as store_name,

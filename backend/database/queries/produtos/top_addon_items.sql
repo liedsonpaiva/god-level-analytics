@@ -1,4 +1,3 @@
--- Itens adicionais mais escolhidos - CORRIGIDO
 SELECT 
     i.name as item_name,
     c.name as category,

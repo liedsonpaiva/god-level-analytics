@@ -1,4 +1,3 @@
--- Distribuição de clientes por faixa etária - CORRIGIDO (SEM parâmetros)
 SELECT 
     CASE 
         WHEN EXTRACT(YEAR FROM AGE(birth_date)) BETWEEN 18 AND 25 THEN '18-25'

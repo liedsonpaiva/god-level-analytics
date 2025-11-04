@@ -1,4 +1,3 @@
--- Produtos com menor margem (usando preços fixos como exemplo)
 SELECT 
     p.name,
     p.category_id,

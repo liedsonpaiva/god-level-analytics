@@ -23,7 +23,6 @@ export interface FilterState {
   categories: string[]
 }
 
-// Tipos para as respostas da API
 export interface SalesSummary {
   total_orders: number
   total_revenue: number

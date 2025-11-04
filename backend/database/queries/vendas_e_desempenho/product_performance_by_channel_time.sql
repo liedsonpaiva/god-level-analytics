@@ -1,4 +1,3 @@
--- database/queries/vendas_e_desempenho/product_performance_by_channel_time.sql
 WITH product_metrics AS (
     SELECT 
         p.name as product_name,
@@ -23,7 +22,6 @@ WITH product_metrics AS (
 SELECT * FROM product_metrics
 ORDER BY total_revenue DESC;
 
--- database/queries/clientes/repeat_customer_analysis.sql
 WITH customer_metrics AS (
     SELECT 
         c.id as customer_id,

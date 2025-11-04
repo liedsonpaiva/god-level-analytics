@@ -1,4 +1,3 @@
--- Valor total de descontos - CORRIGIDO
 SELECT 
     SUM(total_discount) as total_discounts,
     AVG(total_discount) as avg_discount_per_order,

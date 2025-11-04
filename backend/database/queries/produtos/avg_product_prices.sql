@@ -1,4 +1,3 @@
--- Preço médio dos produtos - CORRIGIDO
 SELECT 
     AVG(ps.base_price) as avg_product_price,
     MIN(ps.base_price) as min_price,
